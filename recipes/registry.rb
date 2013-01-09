@@ -3,6 +3,7 @@
 # Recipe:: registry
 #
 # Copyright 2012, Rackspace US, Inc.
+# Copyright 2012-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -76,7 +77,7 @@ end
 execute "glance-manage db_sync" do
   command "sudo -u glance glance-manage db_sync"
   action :nothing
-  notifies :restart, resources(:service => "glance-registry"), :immediately
+  notifies :restart, "service[glance-registry]", :immediately
 end
 
 # Having to manually version the database because of Ubuntu bug
@@ -85,7 +86,7 @@ execute "glance-manage version_control" do
   command "sudo -u glance glance-manage version_control 0"
   action :nothing
   not_if "sudo -u glance glance-manage db_version"
-  notifies :run, resources(:execute => "glance-manage db_sync"), :immediately
+  notifies :run, "execute[glance-manage db_sync]", :immediately
   only_if { platform?(%w{ubuntu debian}) }
 end
 
@@ -155,7 +156,7 @@ template "/etc/glance/glance-registry.conf" do
     "use_syslog" => node["glance"]["syslog"]["use"],
     "log_facility" => node["glance"]["syslog"]["facility"]
     )
-  notifies :run, resources(:execute => "glance-manage version_control"), :immediately
+  notifies :run, "execute[glance-manage version_control]", :immediately
 end
 
 template "/etc/glance/glance-registry-paste.ini" do
@@ -171,5 +172,5 @@ template "/etc/glance/glance-registry-paste.ini" do
     "service_user" => node["glance"]["service_user"],
     "service_pass" => node["glance"]["service_pass"]
     )
-  notifies :restart, resources(:service => "glance-registry"), :immediately
+  notifies :restart, "service[glance-registry]", :immediately
 end

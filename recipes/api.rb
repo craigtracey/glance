@@ -3,7 +3,7 @@
 # Recipe:: api
 #
 # Copyright 2012, Rackspace US, Inc.
-# Copyright 2012, Opscode, Inc.
+# Copyright 2012-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ template "/etc/glance/policy.json" do
   owner "root"
   group "root"
   mode "0644"
-  notifies :restart, resources(:service => "glance-api"), :immediately
+  notifies :restart, "service[glance-api]", :immediately
   not_if do
     File.exists?("/etc/glance/policy.json")
   end
@@ -122,7 +122,7 @@ template "/etc/glance/glance-api.conf" do
     "swift_large_object_chunk_size" => glance["api"]["swift"]["store_large_object_chunk_size"],
     "swift_store_container" => glance["api"]["swift"]["store_container"]
     )
-  notifies :restart, resources(:service => "glance-api"), :immediately
+  notifies :restart, "service[glance-api]", :immediately
 end
 
 template "/etc/glance/glance-api-paste.ini" do
@@ -139,7 +139,7 @@ template "/etc/glance/glance-api-paste.ini" do
     "service_user" => node["glance"]["service_user"],
     "service_pass" => node["glance"]["service_pass"]
     )
-  notifies :restart, resources(:service => "glance-api"), :immediately
+  notifies :restart, "service[glance-api]", :immediately
 end
 
 template "/etc/glance/glance-cache.conf" do
@@ -154,7 +154,7 @@ template "/etc/glance/glance-cache.conf" do
     "log_facility" => node["glance"]["syslog"]["facility"],
     "image_cache_max_size" => node["glance"]["api"]["cache"]["image_cache_max_size"]
     )
-  notifies :restart, resources(:service => "glance-api"), :delayed
+  notifies :restart, "service[glance-api]"
 end
 
 template "/etc/glance/glance-cache-paste.ini" do
@@ -162,7 +162,7 @@ template "/etc/glance/glance-cache-paste.ini" do
   owner "root"
   group "root"
   mode "0644"
-  notifies :restart, resources(:service => "glance-api"), :delayed
+  notifies :restart, "service[glance-api]"
 end
 
 template "/etc/glance/glance-scrubber.conf" do
