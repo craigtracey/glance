@@ -130,16 +130,7 @@ template "/etc/glance/glance-api-paste.ini" do
   owner "root"
   group "root"
   mode "0644"
-  variables(
-    "keystone_api_ipaddress" => ks_admin_endpoint["host"],
-    "keystone_service_port" => ks_service_endpoint["port"],
-    "keystone_admin_port" => ks_admin_endpoint["port"],
-    "keystone_admin_token" => keystone["admin_token"],
-    "service_tenant_name" => node["glance"]["service_tenant_name"],
-    "service_user" => node["glance"]["service_user"],
-    "service_pass" => node["glance"]["service_pass"]
-    )
-  notifies :restart, "service[glance-api]", :immediately
+  notifies :restart, "service[glance-api]"
 end
 
 template "/etc/glance/glance-cache.conf" do
